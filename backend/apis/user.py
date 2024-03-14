@@ -21,33 +21,45 @@ router = APIRouter(route_class=LogRoute)
 
 
 @router.post("/login")
-async def user_login(user: UserLogin, response: Response, db: GetDB) -> ResultSchema[UserOut]:
-    """ 登录 """
+async def user_login(
+    user: UserLogin, response: Response, db: GetDB
+) -> ResultSchema[UserOut]:
+    """登录"""
     try:
         user_schema = user_crud.get_user_by_name(db, user.name)  # 获取用户信息
         if user_schema:
-            password = rsa_decrypt_password(user.password)  # 解密密码 (已在方法内抛出 Error)
-            assert verify_password(password, user_schema.password)  # 验证密码是否正确 (AssertionError)
+            password = rsa_decrypt_password(
+                user.password
+            )  # 解密密码 (已在方法内抛出 Error)
+            assert verify_password(
+                password, user_schema.password
+            )  # 验证密码是否正确 (AssertionError)
         else:
-            raise UserErrors(err_desc="用户不存在")
+            raise UserErrors(err_desc="User does not exist")
     except AssertionError:
-        raise UserErrors(err_desc="用户名或密码错误")
+        raise UserErrors(err_desc="wrong user name or password")
 
     user_resource_obj = resource_crud.get_resource_by_user_id(db, user_schema.id)
-    user_schema.permission_codes = [resource.permission_code for resource in user_resource_obj]  # 更新用户权限
+    user_schema.permission_codes = [
+        resource.permission_code for resource in user_resource_obj
+    ]  # 更新用户权限
 
     set_cookie(user.name, user_schema, response)  # 设置 Cookie
     return Result.success(data=UserOut.from_orm(user_schema))
 
 
 @router.post("/signup")
-async def user_signup(user: UserLogin, response: Response, db: GetDB) -> ResultSchema[UserOut]:
-    """ 注册 """
+async def user_signup(
+    user: UserLogin, response: Response, db: GetDB
+) -> ResultSchema[UserOut]:
+    """注册"""
     user_schema = user_crud.get_user_by_name(db, user.name)  # 获取用户信息
     if user_schema:
         raise UserErrors(err_desc="用户已存在")
     else:
-        user.password = rsa_decrypt_password(user.password)  # 解密密码 (已在方法内抛出 Error)
+        user.password = rsa_decrypt_password(
+            user.password
+        )  # 解密密码 (已在方法内抛出 Error)
         user_obj = user_crud.create(db, user)  # 创建用户
         user_schema = LocalUser.from_orm(user_obj)  # 将用户信息转换为 LocalUser
         role_obj = role_crud.get_role_by_code(db, "ROLE_GUEST")  # 获取游客角色
@@ -59,7 +71,7 @@ async def user_signup(user: UserLogin, response: Response, db: GetDB) -> ResultS
 
 @router.post("/logout")
 async def user_logout(response: Response, _user: CheckCookie) -> ResultSchema:
-    """ 退出登录 """
+    """退出登录"""
     LocalUser.delete(_user.pk)  # 删除redis中的用户信息
     clear_cookie(response)  # 清除cookie
     return Result.success()
@@ -67,7 +79,7 @@ async def user_logout(response: Response, _user: CheckCookie) -> ResultSchema:
 
 @router.get("/menu")
 def user_menu(db: GetDB, _user: CheckCookie) -> ResultSchema[list[MenuOut]]:
-    """ 获取用户菜单 """
+    """获取用户菜单"""
     role_obj = role_crud.get_role_by_user_id(db, _user.id)
     if role_obj:
         resource_obj = resource_crud.get_resource_by_role_id(db, role_obj.id)
@@ -79,8 +91,10 @@ def user_menu(db: GetDB, _user: CheckCookie) -> ResultSchema[list[MenuOut]]:
 
 # @router.get("/list", dependencies=[Depends(check_permission(["sys:user:list"]))])
 @router.get("/list")
-def users(db: GetDB, page: PageQuery, name: str | None = None) -> ResultSchema[list[UserOut]]:
-    """ 获取用户列表 """
+def users(
+    db: GetDB, page: PageQuery, name: str | None = None
+) -> ResultSchema[list[UserOut]]:
+    """获取用户列表"""
     users_obj = user_crud.get_all(db=db, page=page, name=name)
     total = user_crud.get_count(db)
     return Result.success(data=users_obj, total=total)

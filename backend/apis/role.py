@@ -3,6 +3,9 @@
 # @Time : 2023-05-18 16:18
 # @Author : zxiaosi
 # @desc : 角色接口
+
+from typing import List
+
 from fastapi import APIRouter
 
 from common.depends import GetDB, PageQuery
@@ -15,8 +18,10 @@ router = APIRouter(route_class=LogRoute)
 
 
 @router.get("/list")
-def roles(db: GetDB, page: PageQuery, name: str | None = None) -> ResultSchema[list[RoleOut]]:
-    """ 角色列表 """
+def roles(
+    db: GetDB, page: PageQuery, name: str | None = None
+) -> ResultSchema[List[RoleOut]]:
+    """role list"""
     role_obj = role_crud.get_all(db=db, page=page, name=name)
     total = role_crud.get_count(db=db)
     return Result.success(data=role_obj, total=total)

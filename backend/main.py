@@ -25,7 +25,7 @@ register_exception(app)  # 注册异常捕获
 init_table()  # 初始化表
 init_data()  # 初始化表数据
 
-my_logger.info("项目启动成功！！！")
+my_logger.info("-=[Starting The Service]=-")
 
-if __name__ == '__main__':
-    uvicorn.run(app, host="127.0.0.1", port=8000)
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=8000)

@@ -29,10 +29,10 @@ class Settings(BaseSettings):
     COOKIE_MAX_AGE: int = 24 * 60 * 60  # Cookie 有效时间
     COOKIE_NOT_CHECK: list[str] = ["/api/user/login", "/api/user/signup"]  # 不校验 Cookie
 
-    REDIS_URI: str = "redis://:123456@localhost:6379/0"  # Redis
+    REDIS_URI: str = "redis://:123456@redis:6379/0"  # Redis
     REDIS_EXPIRE: int = 24 * 60 * 60  # Redis 过期时长
     REDIS_GLOBAL_PREFIX: str = "redis-om"  # Redis 全局前缀
-    DATABASE_URI: str = "mysql://root:123456@localhost:3306/demo?charset=utf8"  # MySQL
+    DATABASE_URI: str = "mysql://root:123456@mysql:3306/demo?charset=utf8"  # MySQL
     DATABASE_ECHO: bool = False  # 是否打印数据库日志 (可看到创建表、表数据增删改查的信息)
 
     LOGGER_DIR: str = "logs"  # 日志文件夹名
@@ -50,8 +50,8 @@ class DevelopmentConfig(Settings):
 
 
 class ProductionConfig(Settings):
-    BASE_URL: AnyHttpUrl = "http://114.115.143.81:8000"  # 生产环境(为了存放图片全路径)
-    CORS_ORIGINS: list[AnyHttpUrl] = ["http://114.115.143.81"]  # 跨域请求
+    BASE_URL: AnyHttpUrl = "http://localhost:8000"  # 生产环境(为了存放图片全路径)
+    CORS_ORIGINS: list[AnyHttpUrl] = ["http://localhost"]  # 跨域请求
 
     REDIS_URI: str = "redis://:123456@redis:6379/0"  # Redis
     DATABASE_URI: str = "mysql://root:123456@mysql:3306/demo?charset=utf8"  # MySQL

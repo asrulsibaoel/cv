@@ -69,11 +69,11 @@ def register_exception(app: FastAPI):
         else:
             return response_body(request=request, content=Result.fail(msg=exc.err_desc), status_code=exc.code)
 
-    @app.exception_handler(RedisError)
-    async def validation_exception_handler(request: Request, exc: RedisError) -> JSONResponse:
-        """ 系统异常 -- Redis错误 """
-        my_logger.error(f"Redis错误: URL:{request.url}\nHeaders:{request.headers}\nException:{exc}.")
-        return response_body(request=request, content=Result.fail(msg="Redis错误!"))
+    # @app.exception_handler(RedisError)
+    # async def validation_exception_handler(request: Request, exc: RedisError) -> JSONResponse:
+    #     """ 系统异常 -- Redis错误 """
+    #     my_logger.error(f"Redis错误: URL:{request.url}\nHeaders:{request.headers}\nException:{exc}.")
+    #     return response_body(request=request, content=Result.fail(msg="Redis错误!"))
 
     @app.exception_handler(SQLAlchemyError)
     async def validation_exception_handler(request: Request, exc: SQLAlchemyError) -> JSONResponse:
