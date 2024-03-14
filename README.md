@@ -1,188 +1,187 @@
 ## Vue3+ FastAPI Demo
 
-### 1.项目目录
+### 1.Project directory
 
 ```sh
--- backend										# 后端
-	-- api									    # 接口文件夹
-  -- common                   # 公共文件夹
-  -- core                     # 核心文件夹
-    -- config.py              # 配置文件夹
-  -- crud                     # 数据库增删改查文件夹
-  -- models                   
-    -- database               # mysql 表模型
-    -- redis                  # redis 表模型
-  -- register                 # 注册中心
-  -- schemas                  # 模型文件夹 (Java中的实体类或者VO视图类)
-  -- static                   # 静态文件夹
-  -- utils                    # 工具文件夹
-  -- Dockerfile               # 后端服务部署文件
-  -- main.py                  # 项目启动文件
-  -- requirements.txt         # 所需的包
--- frontend
-  -- src
-    -- apis                   # 接口文件夹
-    -- assets                 # 静态资源文件夹
-      -- js
-        -- global.js          # 全局配置文件
-    -- components             # 封装的组件
-    -- request                # 封装的axios
-    -- router                 # 路由
-    -- stores                 # 状态管理
-    -- utils                  # 工具类
-    -- views                  # 页面
-      -- pages                # 布局页面中的 内容
-      -- Login.vue            # 布局页面
-    -- App.vue
-    -- main.ts                
-  -- index.html               # 项目入口
--- demo.sql                   # 数据库 (backend中config.py)
--- docker-compose.yml         # 所有项目部署配置 (nginx, mysql, redis, backend)
+-- backend # backend
+-- api #Interface folder
+   -- common # Public folder
+   -- core # core folder
+     -- config.py # Configuration folder
+   -- crud # Database addition, deletion, modification and query folder
+   -- models
+     -- database # mysql table model
+     -- redis # redis table model
+   --register #Registration center
+   -- schemas # Model folder (entity class or VO view class in Java)
+   -- static # static folder
+   -- utils # Tools folder
+   -- Dockerfile # Backend service deployment file
+   -- main.py # Project startup file
+   -- requirements.txt # Required packages
+--frontend
+   -- src
+     -- apis #Interface folder
+     -- assets # Static resource folder
+       -- js
+         -- global.js # Global configuration file
+     -- components # Encapsulated components
+     -- request # encapsulated axios
+     --router #routing
+     -- stores # status management
+     -- utils # Tool class
+     -- views # page
+       -- pages # Layout the content in the page
+       -- Login.vue # Layout page
+     --App.vue
+     -- main.ts
+   -- index.html # Project entry
+-- demo.sql # Database (config.py in backend)
+-- docker-compose.yml # All project deployment configurations (nginx, mysql, redis, backend)
 ```
 
-### 2.项目启动
+### 2. Project start
 
-+ 后端
++ backend
 
-  ```sh
-  # 安装包 (进入到 backend 文件夹)
-  pip install -r ./requirements.txt
+   ```sh
+   #Install the package (go to the backend folder)
+   pip install -r ./requirements.txt
   
-  # 找到 main.py 中的 主函数, 右键启动
-  ```
+   # Find the main function in main.py, right-click to start
+   ```
 
-+ 前端
++ front end
 
-  ```sh
-  # 安装包 (进入到 frontend 文件夹)
-  npm install
+   ```sh
+   #Install the package (go to the frontend folder)
+   npm install
   
-  # 启动项目
-  npm run start
-  ```
+   # Startup project
+   npm run start
+   ```
 
-## 部署相关
+## Deployment related
 
-### 1.项目目录
+### 1.Project directory
 
 ```sh
--- 服务器
+-- server
 	-- ...
 	-- root
 	-- opt
 		-- containerd 
-		-- docker 								# 存放docker容器配置
-			-- mysql							# mysql 配置
-			-- nginx							# nginx 配置
+		-- docker 								# Store docker container configuration
+			-- mysql							# mysql configuration
+			-- nginx							# nginx configuration
 				-- conf.d						
-					-- default.conf				 # nginx 配置 【重要】
-				-- html							# 存放打包后的文件 【重要】
+					-- default.conf				 # nginx configuration [Important]
+				-- html							# Store the packaged files [Important]
 				-- ...
 			-- redis							# redis
-			-- demo								# 项目配置
-				-- frontend						# 前端
-				-- backend						# 后端
-					-- Dockerfile				# 构建镜像【重要】 
-				-- docker-compose.yml			 # docker-compose 【重要】
+			-- demo								# Project configuration
+				-- frontend						# front end
+				-- backend						# back end
+					-- Dockerfile				# Build an image [Important] 
+				-- docker-compose.yml			 # docker-compose
 				-- ...
 			-- ...
 ```
 
 
+A brief introduction to Docker
 
-### 2. Dcoker浅学
++ [Using Docker-Compose in Ubuntu18.4](https://zxiaosi.com/archives/ae105511.html)
++ [Docker deployment project](https://zxiaosi.com/archives/b32496b.html)
 
-+ [Ubuntu18.4 内使用 Docker-Compose](https://zxiaosi.com/archives/ae105511.html)
-+ [Docker 部署项目](https://zxiaosi.com/archives/b32496b.html)
+### 3. Front-end deployment
 
-### 3. 前端部署
++ Change the `API_URL_PRODUCTION` field in the `frontend/src/assets/js/global.ts` file to the server `IP`
 
-+ 将 `frontend/src/assets/js/global.ts` 文件中 `API_URL_PRODUCTION` 字段改为服务器 `IP`
++ Modify the `isDev` field in the `frontend/src/request/https.ts` file to `false`
 
-+ 修改 `frontend/src/request/https.ts` 文件中的 `isDev` 字段为 `false`
+   ```javascript
+   // Is it a development environment?
+   // const isDev: boolean = true;
+   const isDev: boolean = false;
+   ```
 
-  ```javascript
-  // 是否是开发环境
-  // const isDev: boolean = true;
-  const isDev: boolean = false;
-  ```
++ Run the `npm run build` command to package the file
 
-+ 运行 `npm run build` 命令打包文件
++ Upload the files in `frontend/dist` to the server `/opt/docker/nginx/html` folder
 
-+ 将 `frontend/dist` 中的文件上传到服务器 `/opt/docker/nginx/html` 文件夹下
+### 4. Backend deployment
 
-### 4. 后端部署
++ Modify the `IS_DEV` field in `backend/core/config.py` to `false`
 
-+ 修改 `backend/core/config.py` 中的 `IS_DEV` 字段为 `false`
-
-  ```sh
-  # IS_DEV = True  # 是否开发环境
-  IS_DEV = False  # 是否开发环境
-  ```
+   ```sh
+   # IS_DEV = True # Whether to develop environment
+   IS_DEV = False # Whether to develop environment
+   ```
   
-+ 修改 `backend/core/config.py` 中的部分字段
++ Modify some fields in `backend/core/config.py`
 
-+ 使用 `Docker` 创建网络桥段 
++ Use `Docker` to create network segments
 
-  ```sh
-  # docker network ls 查看网络桥段
-  # docker network create 桥段名 
+   ```sh
+   # docker network ls View network bridge segments
+   # docker network create bridge segment name
   
-  # app 为 docker-compose.yml 中定义的桥段名
-  docker network create app
-  ```
+   # app is the bridge segment name defined in docker-compose.yml
+   docker network create app
+   ```
 
-+ 运行 `/opt/docker/demo` 文件下的 `docker-compose.yml`
++ Run `docker-compose.yml` under the `/opt/docker/demo` file
 
-  ```sh
-  docoker-compose -f /opt/docker/demo/docker-compose.yml up -d
-  ```
+   ```sh
+   docoker-compose -f /opt/docker/demo/docker-compose.yml up -d
+   ```
 
-+ 创建名为 `demo` 的数据库, 并导入 `demo.sql`
++ Create a database named `demo` and import `demo.sql`
 
-### 5. Nginx 配置 ( `/nginx/conf.d/default.conf` )
+### 5. Nginx configuration ( `/nginx/conf.d/default.conf` )
 
 ```sh
 server {
-    listen       80;
-    listen  [::]:80;
-    server_name  localhost;
+     listen 80;
+     listen [::]:80;
+     server_name localhost;
 
-    #charset koi8-r;
-    #access_log  /var/log/nginx/host.access.log  main;
+     #charset koi8-r;
+     #access_log /var/log/nginx/host.access.log main;
 
-    location / {
-        root   /usr/share/nginx/html;
-        index  index.html index.htm;
-        try_files $uri $uri/ /index.html; # 防止页面刷新404
-    }
+     location/{
+         root /usr/share/nginx/html;
+         index index.html index.htm;
+         try_files $uri $uri/ /index.html; # Prevent page refresh 404
+     }
     
-     location /static/avatar/ {
-        proxy_pass http://fastapi:8000/static/avatar/;
-    }
+      location /static/avatar/ {
+         proxy_pass http://fastapi:8000/static/avatar/;
+     }
 
-    location /api {
-        client_max_body_size 5m;
-        proxy_pass http://fastapi:8000; # 这里 localhost -> 对应的容器名
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr; 
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-    }
+     location /api {
+         client_max_body_size 5m;
+         proxy_pass http://fastapi:8000; # Here localhost -> corresponding container name
+         proxy_set_header Host $host;
+         proxy_set_header X-Real-IP $remote_addr;
+         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+     }
     
-    # 可选
-    location /api/docs { # docs 文档地址
-        proxy_pass http://fastapi:8000/docs;
-    }
+     # optional
+     location /api/docs { # docs document address
+         proxy_pass http://fastapi:8000/docs;
+     }
 
-    location /api/redoc { # redoc 文档地址
-        proxy_pass http://fastapi:8000/redoc;
-    }
+     location /api/redoc { #redoc document address
+         proxy_pass http://fastapi:8000/redoc;
+     }
 
-    location /openapi.json { # openapi 地址 (如果代理上述文档地址, 请务必添加 openapi 的代理)
-        proxy_pass http://fastapi:8000/openapi.json;
-    }
+     location /openapi.json { # openapi address (if you proxy the above document address, be sure to add the openapi proxy)
+         proxy_pass http://fastapi:8000/openapi.json;
+     }
 
-    ...
+     ...
 }
 
 ```
